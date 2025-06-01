@@ -1,0 +1,25 @@
+# Bytecode
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Environment files
+.env
+
+# Cache
+.cache/
+*.log
+
+# Node.js
+node_modules/
+
+# Docker
+*.env
+*.pid
+*.sock
+docker-compose.override.yml
+
+# VS Code
+.vscode/
