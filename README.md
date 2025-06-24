@@ -19,7 +19,6 @@ AI Travel Planner is an intelligent assistant that helps users design personaliz
 ### Prerequisites
 
 - Python 3.9 or later
-- Node.js (for `mcp-server-airbnb`)
 - Virtual environment (recommended)
 
 ### Setup
