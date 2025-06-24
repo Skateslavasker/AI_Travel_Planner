@@ -7,6 +7,7 @@ from agno.agent import Agent
 from agno.team.team import Team
 from agno.tools.mcp import MultiMCPTools
 from agno.models.openai import OpenAIChat
+# from agents import get_agents
 import nest_asyncio
 
 # Allow nested event loops (Streamlit-specific quirk)
@@ -40,7 +41,7 @@ async def run_agent(message: str):
     mcp_commands = [
         "npx -y @openbnb/mcp-server-airbnb --ignore-robots-txt",
         "python3 maps_mcp.py",
-        "python3 weather_mcp.py",
+        "python3 weather_mcp.py",  
         "python3 calendar_mcp.py"
     ]
     os.environ["OPENAI_API_KEY"] = openai_key
@@ -52,7 +53,8 @@ async def run_agent(message: str):
             print(f"{k} = {env[k][:5]}***")
 
     async with MultiMCPTools(mcp_commands, env=env) as mcp_tools:
-        
+
+                
         maps_agent = Agent(
             tools=[mcp_tools],
             model=OpenAIChat(id="gpt-4o-mini", api_key=openai_key),
@@ -73,7 +75,9 @@ async def run_agent(message: str):
             - Proximity to other planned activities"""
         )
 
-        weather_agent = Agent(
+        
+
+        weather_agent = Agent( 
             tools=[mcp_tools],
             model=OpenAIChat(id="gpt-4o-mini", api_key=openai_key),
             name="Weather Agent",
@@ -112,6 +116,7 @@ async def run_agent(message: str):
             - Amenities matching preferences
             - Special requirements or accessibility needs"""
         )
+
         calendar_agent = Agent(
             tools=[mcp_tools],
             model=OpenAIChat(id="gpt-4o-mini", api_key=openai_key),
@@ -123,7 +128,8 @@ async def run_agent(message: str):
             4. Adding reminders for booking deadlines, check-ins, and other important event.
             5. Avoiding duplicate or overlapping events
             6. Coordinating with other team members' schedules
-            
+
+                        
             Always consider:
             - Time zone differences
             - Travel duration between activities
@@ -134,9 +140,10 @@ async def run_agent(message: str):
             - Check existing calendar before calling `create_event()`
             """
         )
+        
 
         team = Team(
-            members=[maps_agent, weather_agent, booking_agent, calendar_agent],
+            members=[ maps_agent, weather_agent, booking_agent, calendar_agent], 
             name="Travel Planning Team",
             markdown=True,
             show_tool_calls=True,
@@ -152,6 +159,28 @@ async def run_agent(message: str):
             """
         )
 
+        # ------ new ---------------
+
+        # agents = get_agents(mcp_tools, openai_key)
+
+        # team = Team(
+        #     members= agents,
+        #     name="Travel Planning Team",
+        #     markdown=True,
+        #     show_tool_calls=True,
+        #     instructions="""As a Travel Planning Team, coordinate to create comprehensive travel plans:
+        #     1. Share information between agents to ensure consistency
+        #     2. Consider dependencies between different aspects of the trip
+        #     3. Prioritize user preferences and constraints
+        #     4. Provide backup options when primary choices are unavailable
+        #     5. Maintain a balance between planned activities and free time
+        #     6. Consider local events and seasonal factors
+        #     7. Ensure all recommendations align with the user's budget
+        #     8. Provide a detailed breakdown of the trip, including bookings, routes, weather, and planned activities.
+        #     """
+        # )
+
+        # --------------------------------------------------------------------
         result = await team.arun(message)
 
         # Collect final markdown response
@@ -222,7 +251,7 @@ with col1:
     # Source and Destination
     source = st.text_input("Source", placeholder="Enter your departure city")
     destination = st.text_input("Destination", placeholder= "Enter your destination city")
-    
+    print(f"🌍 Source: '{source}' | Destination: '{destination}'")
     # Travel Dates
     travel_dates = st.date_input(
         "Travel Dates",
@@ -307,7 +336,7 @@ if st.button("Plan My Trip", type="primary", disabled=not all_keys_filled):
                 2. **Weather Agent**:
                 - Use `get_hourly_weather()` to fetch weather forecasts for each day of the trip at both {source} and {destination}.
                 - Summarize the expected daily weather (temperature, rain chance, recommendations).
-
+                
                 3. **Booking Agent**:
                 - Recommend at least 3 accommodations within budget using Airbnb tools.
                 - Show prices, amenities, and links.
@@ -330,6 +359,12 @@ if st.button("Plan My Trip", type="primary", disabled=not all_keys_filled):
                 - Agents use tool calls directly.
                 - Avoid unnecessary filler or vague language.
                 """
+
+                
+                
+
+                
+                
 
                 
                 # Run the agents

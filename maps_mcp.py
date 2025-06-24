@@ -51,7 +51,15 @@ async def get_route_summary(origin: str, destination: str) -> dict:
     logger.debug(f"Directions API response: {data}")
 
     if data["status"] != "OK":
-        raise Exception(f"Error fetching route data: {data['status']}")
+        error_message = data.get("error_message", "No error message provided")
+        if data["status"] == "NOT_FOUND":
+            logger.warning(f"No route found between {origin} and {destination}")
+            return {
+                "route_summary": "No route found between the specified locations.",
+                "map_link": f"https://www.google.com/maps/dir/{origin.replace(' ', '+')}/{destination.replace(' ', '+')}",
+                "map_embed": ""
+            }
+        raise Exception(f"Google Maps API error: {data['status']} – {error_message}")
     
     leg = data["routes"][0]["legs"][0]
     summary = f"{leg['distance']['text']} in approximately {leg['duration']['text']}"
@@ -81,5 +89,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

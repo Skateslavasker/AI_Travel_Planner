@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 
 # Virtual environment
-venv/
+.venv/
+
 
 # Environment files
 .env
@@ -23,3 +24,7 @@ docker-compose.override.yml
 
 # VS Code
 .vscode/
+
+
+test_refresh.py
+agents.py
